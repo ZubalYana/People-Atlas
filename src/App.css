@@ -1,0 +1,23 @@
+body {
+    background-color: #fcfcfc;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: Raleway;
+}
+
+p,
+div,
+span,
+a,
+li,
+ol,
+ul,
+link {
+    font-family: Montserrat Alternates;
+}
