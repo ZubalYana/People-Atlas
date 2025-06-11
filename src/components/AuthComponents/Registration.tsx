@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Button, TextField, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
-export default function Registration() {
+type RegistrationProps = {
+    switchToLogin: () => void;
+};
+export default function Registration({ switchToLogin }: RegistrationProps) {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => setShowPassword(prev => !prev);
@@ -67,8 +69,14 @@ export default function Registration() {
             >
                 Create account
             </Button>
-            <p className='text-[14px] font-light mt-4'>
-                Already a user? <span className='font-normal cursor-pointer text-[#10B981]'>Login</span>
+            <p className="text-[14px] font-light mt-4">
+                Already a user?{' '}
+                <span
+                    onClick={switchToLogin}
+                    className="font-normal cursor-pointer text-[#10B981] hover:underline"
+                >
+                    Login
+                </span>
             </p>
         </div>
     );
