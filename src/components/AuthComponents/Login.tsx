@@ -10,6 +10,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useState } from 'react';
 import { useAlertStore } from '../../stores/useAlertStore';
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../../stores/useAuthStore';
 
 type LoginProps = {
     switchToRegister: () => void;
@@ -46,12 +47,14 @@ export default function Login({ switchToRegister }: LoginProps) {
                 throw new Error(data.message || 'Login failed');
             }
 
-            localStorage.setItem('token', data.token);
+            const { setAuth } = useAuthStore();
+            setAuth(data.user, data.token);
             setAlert('Logged in successfully!', 'success');
 
             setEmail('');
             setPassword('');
-            navigate('/')
+            navigate('/');
+
         } catch (error: any) {
             setAlert(error.message || 'Something went wrong', 'error');
         } finally {
