@@ -29,6 +29,7 @@ export default function Login({ switchToRegister }: LoginProps) {
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
     };
+    const { setAuth } = useAuthStore();
 
     const handleLogin = async () => {
         clearAlert();
@@ -47,7 +48,6 @@ export default function Login({ switchToRegister }: LoginProps) {
                 throw new Error(data.message || 'Login failed');
             }
 
-            const { setAuth } = useAuthStore();
             setAuth(data.user, data.token);
             setAlert('Logged in successfully!', 'success');
 
