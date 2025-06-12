@@ -3,7 +3,7 @@ import Sidemenu from './Sidemenu'
 import { Menu } from 'lucide-react'
 
 export default function PageLayout({ children }: { children: React.ReactNode }) {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
     return (
         <div className="flex h-screen overflow-hidden">
