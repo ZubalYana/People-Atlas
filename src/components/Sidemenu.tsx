@@ -9,8 +9,8 @@ export default function Sidemenu({ onClose }: { onClose: () => void }) {
                 </button>
             </div>
             <nav className="mt-4 space-y-2">
-                <a href="#" className="block text-gray-700">Home</a>
                 <a href="#" className="block text-gray-700">Network</a>
+                <a href="#" className="block text-gray-700">Characters list</a>
                 <a href="#" className="block text-gray-700">Settings</a>
             </nav>
         </div>
