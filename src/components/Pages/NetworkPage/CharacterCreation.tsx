@@ -11,7 +11,7 @@ import {
     Alert,
 } from "@mui/material";
 import { useState } from "react";
-
+import { UserCircle2 } from "lucide-react";
 interface CharacterData {
     name?: string;
     lastName?: string;
@@ -73,10 +73,28 @@ export default function CharacterCreation({
     const handleBack = () => setActiveStep((prev) => prev - 1);
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullWidth
+            PaperProps={{
+                sx: {
+                    maxWidth: '650px',
+                    width: '100%',
+                },
+            }}
+        >
             <DialogTitle><h2> Create Character</h2></DialogTitle>
             <DialogContent>
-                <Stepper activeStep={activeStep} alternativeLabel>
+                <Stepper
+                    activeStep={activeStep}
+                    alternativeLabel
+                    sx={{
+                        "& .MuiStepIcon-root.Mui-completed": { color: "#10B981" },
+                        "& .MuiStepIcon-root.Mui-active": { color: "#10B981" },
+                    }}
+                >
+
                     {steps.map((label) => (
                         <Step key={label}>
                             <StepLabel>{label}</StepLabel>
@@ -87,84 +105,87 @@ export default function CharacterCreation({
                 {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
 
                 {activeStep === 0 && (
-                    <>
-                        <TextField
-                            label="Name"
-                            fullWidth
-                            value={formData.name || ""}
-                            onChange={handleChange("name")}
-                            sx={{ mt: 2 }}
-                            required
-                        />
-                        <TextField
-                            label="Last Name"
-                            fullWidth
-                            value={formData.lastName || ""}
-                            onChange={handleChange("lastName")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="Patronymic"
-                            fullWidth
-                            value={formData.patronymic || ""}
-                            onChange={handleChange("patronymic")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="AKA ( nickname )"
-                            fullWidth
-                            value={formData.nickname || ""}
-                            onChange={handleChange("nickname")}
-                            sx={{ mt: 2 }}
-                        />
-                    </>
+                    <div className="flex">
+                        <div className="w-[380px] h-[210px] flex items-center justify-center mt-2">
+                            <UserCircle2 className="w-[80%] h-auto text-[#1E293B]" strokeWidth={1.5} />
+                        </div>
+                        <div className="h-full">
+                            <TextField
+                                label="Name"
+                                fullWidth
+                                value={formData.name || ""}
+                                onChange={handleChange("name")}
+                                sx={{ mt: 2 }}
+                                required
+                            />
+                            <TextField
+                                label="Last Name"
+                                fullWidth
+                                value={formData.lastName || ""}
+                                onChange={handleChange("lastName")}
+                                sx={{ mt: 2 }}
+                            />
+                            <TextField
+                                label="AKA ( nickname )"
+                                fullWidth
+                                value={formData.nickname || ""}
+                                onChange={handleChange("nickname")}
+                                sx={{ mt: 2 }}
+                            />
+                        </div>
+
+                    </div>
                 )}
 
                 {activeStep === 1 && (
-                    <>
-                        <TextField
-                            label="Email"
-                            fullWidth
-                            value={formData.email || ""}
-                            onChange={handleChange("email")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="Phone"
-                            fullWidth
-                            value={formData.phone || ""}
-                            onChange={handleChange("phone")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="Instagram"
-                            fullWidth
-                            value={formData.instagram || ""}
-                            onChange={handleChange("instagram")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="Telegram"
-                            fullWidth
-                            value={formData.telegram || ""}
-                            onChange={handleChange("telegram")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="Facebook"
-                            fullWidth
-                            value={formData.facebook || ""}
-                            onChange={handleChange("facebook")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="Address"
-                            fullWidth
-                            value={formData.address || ""}
-                            onChange={handleChange("address")}
-                            sx={{ mt: 2 }}
-                        />
-                    </>
+                    <div className="flex gap-3">
+                        <div className="w-[50%]">
+                            <TextField
+                                label="Email"
+                                fullWidth
+                                value={formData.email || ""}
+                                onChange={handleChange("email")}
+                                sx={{ mt: 2 }}
+                            />
+                            <TextField
+                                label="Phone"
+                                fullWidth
+                                value={formData.phone || ""}
+                                onChange={handleChange("phone")}
+                                sx={{ mt: 2 }}
+                            />
+                            <TextField
+                                label="Instagram"
+                                fullWidth
+                                value={formData.instagram || ""}
+                                onChange={handleChange("instagram")}
+                                sx={{ mt: 2 }}
+                            />
+                        </div>
+                        <div className="w-[50%]">
+                            <TextField
+                                label="Telegram"
+                                fullWidth
+                                value={formData.telegram || ""}
+                                onChange={handleChange("telegram")}
+                                sx={{ mt: 2 }}
+                            />
+                            <TextField
+                                label="Facebook"
+                                fullWidth
+                                value={formData.facebook || ""}
+                                onChange={handleChange("facebook")}
+                                sx={{ mt: 2 }}
+                            />
+                            <TextField
+                                label="Address"
+                                fullWidth
+                                value={formData.address || ""}
+                                onChange={handleChange("address")}
+                                sx={{ mt: 2 }}
+                            />
+                        </div>
+                    </div>
                 )}
 
                 {activeStep === 2 && (
@@ -228,9 +249,18 @@ export default function CharacterCreation({
                 )}
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
-                {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
-                <Button onClick={handleNext} variant="contained">
+                <Button
+                    onClick={onClose}
+                    sx={{ backgroundColor: '#1E293B', color: '#fff', '&:hover': { backgroundColor: '#0e141e' } }}
+                >
+                    Cancel
+                </Button>
+                {activeStep > 0 && <Button onClick={handleBack} sx={{ color: '#1E293B' }}>Back</Button>}
+                <Button
+                    onClick={handleNext}
+                    variant="contained"
+                    sx={{ backgroundColor: '#10B981', '&:hover': { backgroundColor: '#0f9f75' } }}
+                >
                     {activeStep === steps.length - 1 ? "Save" : "Next"}
                 </Button>
             </DialogActions>

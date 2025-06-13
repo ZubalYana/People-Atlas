@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "../../../stores/useAuthStore";
 import { UserCircle2 } from "lucide-react";
 import PageLayout from "../../PageLayout";
