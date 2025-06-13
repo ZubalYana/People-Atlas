@@ -10,17 +10,12 @@ export default function PageLayout({ children }: { children: React.ReactNode }) 
 
     return (
         <div className="flex h-screen overflow-hidden">
-            {/* Sidebar container with animation */}
             <div
                 className={`transition-all duration-300 ${isSidemenuOpen ? 'w-64' : 'w-0'}`}
             >
-                {/* Sidebar content only rendered if open */}
                 {isSidemenuOpen && <Sidemenu />}
             </div>
-
-            {/* Main content */}
             <div className="flex-1 bg-gray-100 p-4 relative overflow-y-auto">
-                {/* Show menu button only if sidebar is closed */}
                 {!isSidemenuOpen && (
                     <button
                         onClick={openSidemenu}
@@ -29,7 +24,6 @@ export default function PageLayout({ children }: { children: React.ReactNode }) 
                         <Menu />
                     </button>
                 )}
-
                 {children}
             </div>
         </div>

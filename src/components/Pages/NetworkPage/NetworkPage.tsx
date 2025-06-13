@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import PageLayout from "../../PageLayout";
 import { useAuthStore } from "../../../stores/useAuthStore";
-import { UserCircle2 } from "lucide-react";
+import { UserCircle2, Plus } from "lucide-react";
 import CharacterCreation from "./CharacterCreation";
+import { Button } from "@mui/material";
 
 export default function NetworkPage() {
     const { user, fetchUser } = useAuthStore();
@@ -15,7 +16,7 @@ export default function NetworkPage() {
     const character = user?.character;
     const photoUrl = character?.photo;
 
-    const handleCharacterClick = () => {
+    const handleCharacterCreationClick = () => {
         setModalOpen(true);
     };
 
@@ -25,13 +26,12 @@ export default function NetworkPage() {
 
     return (
         <PageLayout>
-            <div className="w-full h-full flex flex-col items-center justify-center">
+            <div className="w-full h-full flex flex-col items-center justify-center relative">
                 <h1 className="text-2xl font-semibold">Your connections network:</h1>
 
                 <div className="w-full flex justify-center items-center lg:h-[90%]">
                     <div
                         className="w-[60px] flex flex-col items-center cursor-pointer"
-                        onClick={handleCharacterClick}
                     >
                         <div className="w-[60px] h-[60px] rounded-full overflow-hidden flex items-center justify-center bg-gray-100">
                             {photoUrl ? (
@@ -48,7 +48,23 @@ export default function NetworkPage() {
                             {character?.name}
                         </p>
                     </div>
+
                 </div>
+                <Button
+                    variant="contained"
+                    onClick={handleCharacterCreationClick}
+                    sx={{
+                        backgroundColor: '#10B981',
+                        '&:hover': { backgroundColor: '#0f9f75' },
+                        position: 'absolute',
+                        bottom: '20px',
+                        right: '20px',
+                        padding: '20px',
+                        borderRadius: '50%',
+                    }}
+                >
+                    <Plus strokeWidth={4} size={24} />
+                </Button>
 
                 <CharacterCreation
                     open={modalOpen}
