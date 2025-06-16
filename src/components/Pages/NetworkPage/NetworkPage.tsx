@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import PageLayout from "../../PageLayout";
 import { useAuthStore } from "../../../stores/useAuthStore";
+import { useAlertStore } from "../../../stores/useAlertStore";
 import { UserCircle2, Plus } from "lucide-react";
 import CharacterCreation from "./CharacterCreation";
-import { Button } from "@mui/material";
+import { Button, Alert } from "@mui/material";
 
 export default function NetworkPage() {
     const { user, fetchUser } = useAuthStore();
@@ -15,12 +16,14 @@ export default function NetworkPage() {
 
     const character = user?.character;
     const photoUrl = character?.photo;
+    const { message, severity, setAlert, clearAlert } = useAlertStore();
 
     const handleCharacterCreationClick = () => {
         setModalOpen(true);
     };
 
     const handleCharacterSave = async (data: any) => {
+
         try {
             const formData = new FormData();
 
@@ -68,11 +71,14 @@ export default function NetworkPage() {
 
             if (response.ok) {
                 console.log("✅ Character created:", result.character);
+                setAlert("Character created successfully", "success");
             } else {
                 console.error("❌ Server error:", result.message);
+                setAlert(result.message || "Server error while creating character", "error");
             }
         } catch (error) {
             console.error("❌ Request failed:", error);
+            setAlert("Failed to create character. Please try again.", "error");
         }
     };
 
@@ -125,7 +131,17 @@ export default function NetworkPage() {
                     onSave={handleCharacterSave}
                     initialData={CharacterData}
                 />
+
             </div>
+            {message && severity && (
+                <Alert
+                    severity={severity}
+                    onClose={clearAlert}
+                    sx={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}
+                >
+                    {message}
+                </Alert>
+            )}
         </PageLayout>
     );
 }

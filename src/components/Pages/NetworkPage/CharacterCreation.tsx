@@ -329,14 +329,19 @@ export default function CharacterCreation({
                                 setFormData({ ...formData, interests: newValue });
                             }}
                             renderTags={(value: readonly string[], getTagProps) =>
-                                value.map((option: string, index: number) => (
-                                    <Chip
-                                        variant="outlined"
-                                        label={option}
-                                        {...getTagProps({ index })}
-                                        sx={{ borderRadius: "8px" }}
-                                    />
-                                ))
+                                value.map((option: string, index: number) => {
+                                    const { key, ...tagProps } = getTagProps({ index });
+                                    return (
+                                        <Chip
+                                            key={key}
+                                            variant="outlined"
+                                            label={option}
+                                            {...tagProps}
+                                            sx={{ borderRadius: "8px" }}
+                                        />
+                                    );
+                                })
+
                             }
                             renderInput={(params) => (
                                 <TextField
