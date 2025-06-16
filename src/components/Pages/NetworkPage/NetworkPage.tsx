@@ -20,9 +20,62 @@ export default function NetworkPage() {
         setModalOpen(true);
     };
 
-    const handleCharacterSave = (data: any) => {
-        console.log("Saved character data:", data);
+    const handleCharacterSave = async (data: any) => {
+        try {
+            const formData = new FormData();
+
+            if (data.photo) {
+                formData.append("photo", data.photo);
+            }
+
+            const fields = [
+                "name",
+                "lastName",
+                "nickname",
+                "phone",
+                "email",
+                "instagram",
+                "telegram",
+                "facebook",
+                "address",
+                "birthday",
+                "relatedEvents",
+                "howDidYouMeet",
+                "notes",
+            ];
+
+            fields.forEach((field) => {
+                if (data[field]) {
+                    formData.append(field, data[field]);
+                }
+            });
+
+            const arrayFields = ["tags", "interests", "otherRelationships"];
+            arrayFields.forEach((field) => {
+                if (Array.isArray(data[field])) {
+                    data[field].forEach((value: string) => {
+                        formData.append(field, value);
+                    });
+                }
+            });
+
+            const response = await fetch("http://localhost:5000/api/characters", {
+                method: "POST",
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log("✅ Character created:", result.character);
+            } else {
+                console.error("❌ Server error:", result.message);
+            }
+        } catch (error) {
+            console.error("❌ Request failed:", error);
+        }
     };
+
 
     return (
         <PageLayout>
@@ -70,7 +123,7 @@ export default function NetworkPage() {
                     open={modalOpen}
                     onClose={() => setModalOpen(false)}
                     onSave={handleCharacterSave}
-                    initialData={character}
+                    initialData={CharacterData}
                 />
             </div>
         </PageLayout>

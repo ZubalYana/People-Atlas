@@ -56,7 +56,25 @@ export default function CharacterCreation({
     onSave,
 }: CharacterCreationProps) {
     const [activeStep, setActiveStep] = useState(0);
-    const [formData, setFormData] = useState<CharacterData>(initialData);
+    const [formData, setFormData] = useState<CharacterData>(() => ({
+        name: "",
+        lastName: "",
+        nickname: "",
+        phone: "",
+        email: "",
+        instagram: "",
+        telegram: "",
+        facebook: "",
+        address: "",
+        tags: [],
+        otherRelationships: [],
+        birthday: "",
+        interests: [],
+        relatedEvents: "",
+        howDidYouMeet: "",
+        notes: "",
+        ...initialData,
+    }));
     const [error, setError] = useState("");
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
@@ -93,6 +111,7 @@ export default function CharacterCreation({
         setFormData({ ...formData, [field]: e.target.value });
     };
 
+
     const handleNext = () => {
         if (activeStep < steps.length - 1) {
             setActiveStep((prev) => prev + 1);
@@ -121,7 +140,7 @@ export default function CharacterCreation({
                 },
             }}
         >
-            <DialogTitle><h2> Create Character</h2></DialogTitle>
+            <DialogTitle>Create Character</DialogTitle>
             <DialogContent>
                 <Stepper
                     activeStep={activeStep}
@@ -253,7 +272,7 @@ export default function CharacterCreation({
                                 onChange={(newValue) => {
                                     setFormData({ ...formData, birthday: newValue?.format("YYYY-MM-DD") });
                                 }}
-                                slotProps={{ textField: { fullWidth: true, sx: { mt: 2 } } }}
+                                slotProps={{ textField: { fullWidth: true, sx: { mt: 2, mb: 2 } } }}
                             />
                         </LocalizationProvider>
                         <Autocomplete
@@ -261,26 +280,31 @@ export default function CharacterCreation({
                             freeSolo
                             options={defaultTags}
                             value={formData.tags || []}
-                            onChange={(event, newValue) => {
-                                setFormData({ ...formData, tags: newValue });
-                            }}
+                            onChange={(_, newValue) =>
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    tags: newValue,
+                                }))
+                            }
                             renderTags={(value: readonly string[], getTagProps) =>
-                                value.map((option: string, index: number) => (
-                                    <Chip
-                                        variant="outlined"
-                                        label={option}
-                                        {...getTagProps({ index })}
-                                        sx={{ borderRadius: "8px" }}
-                                    />
-                                ))
+                                value.map((option: string, index: number) => {
+                                    const { key, ...tagProps } = getTagProps({ index });
+                                    return (
+                                        <Chip
+                                            key={key}
+                                            label={option}
+                                            variant="outlined"
+                                            {...tagProps}
+                                            sx={{ borderRadius: "8px" }}
+                                        />
+                                    );
+                                })
                             }
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    variant="outlined"
                                     label="Tags"
-                                    placeholder="Select or type tags"
-                                    sx={{ mt: 2 }}
+                                    placeholder="Add a tag"
                                 />
                             )}
                         />
@@ -301,7 +325,7 @@ export default function CharacterCreation({
                             freeSolo
                             options={defaultInterests}
                             value={formData.interests || []}
-                            onChange={(event, newValue) => {
+                            onChange={(_, newValue) => {
                                 setFormData({ ...formData, interests: newValue });
                             }}
                             renderTags={(value: readonly string[], getTagProps) =>

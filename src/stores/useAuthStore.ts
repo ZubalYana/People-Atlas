@@ -9,7 +9,7 @@ type Character = {
         password?: string;
         authProvider?: string;
     };
-    owner?: string; // or Character if populated
+    owner?: string; //or Character if populated
     photo?: string;
     name: string;
     lastName?: string;
@@ -72,7 +72,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         if (!token) return;
 
         try {
-            const res = await axios.get('/api/user', {
+            const res = await axios.get('/api/auth/user', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
