@@ -122,6 +122,27 @@ export default function CharacterCreation({
             }
             setError("");
             onSave(formData);
+            setFormData({
+                name: "",
+                lastName: "",
+                nickname: "",
+                phone: "",
+                email: "",
+                instagram: "",
+                telegram: "",
+                facebook: "",
+                address: "",
+                tags: [],
+                otherRelationships: [],
+                birthday: "",
+                interests: [],
+                relatedEvents: "",
+                howDidYouMeet: "",
+                notes: "",
+            });
+
+            setActiveStep(0);
+            setPhotoPreview(null);
             onClose();
         }
     };
