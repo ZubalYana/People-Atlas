@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useAuthStore } from "../../../stores/useAuthStore";
-import { UserCircle2 } from "lucide-react";
+import { UserCircle2, LogOut, Pencil } from "lucide-react";
 import PageLayout from "../../PageLayout";
+import { Button } from "@mui/material";
 export default function ProfilePage() {
     const { user, fetchUser } = useAuthStore();
     useEffect(() => {
@@ -14,7 +15,7 @@ export default function ProfilePage() {
         <PageLayout>
             <div className="w-full h-full flex flex-col items-center justify-center">
                 <h1 className="text-2xl font-semibold">Your Profile:</h1>
-                <div className="w-full flex lg:h-[90%]">
+                <div className="w-full flex flex-col lg:h-[90%]">
                     <div className="flex">
                         <div className="w-[90px] h-[90px] rounded-full overflow-hidden flex items-center justify-center bg-gray-100">
                             {photoUrl ? (
@@ -27,9 +28,64 @@ export default function ProfilePage() {
                                 <UserCircle2 className="w-full h-full text-[#10B981]" strokeWidth={1.5} />
                             )}
                         </div>
-                        <div>
-                            <h3>{character?.name} {character?.lastName} {character?.patronymic}</h3>
+                        <div className="pt-2 ml-3">
+                            <h3 className="text-[22px] font-bold text-[#1E293B]">{character?.name} {character?.lastName}</h3>
+                            <p className="text-[16px]">{user?.email}</p>
                         </div>
+                    </div>
+                    <div className="w-[380px] flex gap-4 mt-3">
+                        <Button
+                            variant="outlined"
+                            fullWidth
+                            sx={{
+                                px: 3,
+                                py: 1.2,
+                                borderRadius: 2,
+                                borderColor: '#3237d5',
+                                fontWeight: 'bold',
+                                fontSize: '14px',
+                                textTransform: 'none',
+                                boxShadow: '0px 4px 10px rgba(0,0,0,0.1)',
+                                color: '#3237d5',
+                                '&:hover': {
+                                    borderColor: '#242898',
+                                    color: '#242898',
+                                    backgroundColor: 'rgba(213, 50, 50, 0.04)',
+                                },
+                                '&.Mui-disabled': {
+                                    backgroundColor: '#ccc',
+                                },
+                            }}
+                        >
+                            <Pencil strokeWidth={1.5} className="mr-2" />
+                            Edit
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            fullWidth
+                            sx={{
+                                px: 3,
+                                py: 1.2,
+                                borderRadius: 2,
+                                borderColor: '#d53232',
+                                fontWeight: 'bold',
+                                fontSize: '14px',
+                                textTransform: 'none',
+                                boxShadow: '0px 4px 10px rgba(0,0,0,0.1)',
+                                color: '#d53232',
+                                '&:hover': {
+                                    borderColor: '#a82828',
+                                    color: '#a82828',
+                                    backgroundColor: 'rgba(213, 50, 50, 0.04)',
+                                },
+                                '&.Mui-disabled': {
+                                    backgroundColor: '#ccc',
+                                },
+                            }}
+                        >
+                            <LogOut strokeWidth={1.5} className="mr-2" />
+                            Log out
+                        </Button>
                     </div>
                 </div>
             </div>
