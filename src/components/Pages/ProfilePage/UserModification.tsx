@@ -17,9 +17,11 @@ import { UserCircle2 } from "lucide-react";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useAuthStore } from "../../../stores/useAuthStore";
+import { useAlertStore } from "../../../stores/useAlertStore";
 import dayjs from 'dayjs';
 
-interface CharacterData {
+interface UserCharacterData {
     name?: string;
     lastName?: string;
     patronymic?: string;
@@ -31,23 +33,19 @@ interface CharacterData {
     facebook?: string;
     address?: string;
     birthday?: string;
-    tags?: string[];
-    otherRelationships?: string[];
     interests?: string[];
-    relatedEvents?: string;
-    howDidYouMeet?: string;
     notes?: string;
-    [key: string]: any;
+    photo?: File | string;
 }
 
 interface UserModificationProps {
     open: boolean;
     onClose: () => void;
-    initialData?: CharacterData;
-    onSave: (data: CharacterData) => void;
+    initialData?: UserCharacterData;
+    onSave: (data: UserCharacterData) => void;
 }
 
-const steps = ["Basic Info", "Contact", "Additional", "Details"];
+const steps = ["Basic Info", "Contact", "Other"];
 
 export default function UserModification({
     open,
@@ -56,7 +54,9 @@ export default function UserModification({
     onSave,
 }: UserModificationProps) {
     const [activeStep, setActiveStep] = useState(0);
-    const [formData, setFormData] = useState<CharacterData>(() => ({
+    const { user, fetchUser } = useAuthStore();
+    const token = localStorage.getItem('token');
+    const [formData, setFormData] = useState<UserCharacterData>({
         name: "",
         lastName: "",
         nickname: "",
@@ -66,55 +66,47 @@ export default function UserModification({
         telegram: "",
         facebook: "",
         address: "",
-        tags: [],
-        otherRelationships: [],
         birthday: "",
         interests: [],
-        relatedEvents: "",
-        howDidYouMeet: "",
         notes: "",
-        ...initialData,
-    }));
+    });
 
     useEffect(() => {
-        if (open && initialData) {
+        if (open) {
+            const userChar = user?.character;
+
             setFormData({
-                name: "",
-                lastName: "",
-                nickname: "",
-                phone: "",
-                email: "",
-                instagram: "",
-                telegram: "",
-                facebook: "",
-                address: "",
-                tags: [],
-                otherRelationships: [],
-                birthday: "",
-                interests: [],
-                relatedEvents: "",
-                howDidYouMeet: "",
-                notes: "",
-                ...initialData,
+                name: initialData?.name ?? userChar?.name ?? "",
+                lastName: initialData?.lastName ?? userChar?.lastName ?? "",
+                nickname: initialData?.nickname ?? userChar?.nickname ?? "",
+                phone: initialData?.phone ?? userChar?.phone ?? "",
+                email: initialData?.email ?? userChar?.email ?? "",
+                instagram: initialData?.instagram ?? userChar?.instagram ?? "",
+                telegram: initialData?.telegram ?? userChar?.telegram ?? "",
+                facebook: initialData?.facebook ?? userChar?.facebook ?? "",
+                address: initialData?.address ?? userChar?.address ?? "",
+                birthday: initialData?.birthday ?? userChar?.birthday ?? "",
+                interests: Array.isArray(initialData?.interests)
+                    ? initialData.interests
+                    : Array.isArray(userChar?.interests)
+                        ? userChar.interests
+                        : userChar?.interests
+                            ? [userChar.interests]
+                            : [],
+                notes: initialData?.notes ?? userChar?.notes ?? "",
+                photo: initialData?.photo ?? userChar?.photo ?? undefined,
             });
 
-            if (initialData.photo) {
-                setPhotoPreview(typeof initialData.photo === "string" ? initialData.photo : null);
+            const preview = initialData?.photo ?? userChar?.photo;
+            if (typeof preview === "string") {
+                setPhotoPreview(preview);
             }
         }
-    }, [initialData, open]);
+    }, [open, user, initialData]);
 
     const [error, setError] = useState("");
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-
-    const defaultTags = [
-        "Friend",
-        "Relative",
-        "Acquaintance",
-        "Classmate",
-        "Romantic",
-    ];
-
+    const { setAlert } = useAlertStore();
     const defaultInterests = [
         "Music",
         "Art",
@@ -135,13 +127,11 @@ export default function UserModification({
         "Volunteering",
     ];
 
-
     const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [field]: e.target.value });
     };
 
-
-    const handleNext = () => {
+    const handleNext = async () => {
         if (activeStep < steps.length - 1) {
             setActiveStep((prev) => prev + 1);
         } else {
@@ -149,36 +139,69 @@ export default function UserModification({
                 setError("Name is required");
                 return;
             }
-            setError("");
-            onSave(formData);
-            setFormData({
-                name: "",
-                lastName: "",
-                nickname: "",
-                phone: "",
-                email: "",
-                instagram: "",
-                telegram: "",
-                facebook: "",
-                address: "",
-                tags: [],
-                otherRelationships: [],
-                birthday: "",
-                interests: [],
-                relatedEvents: "",
-                howDidYouMeet: "",
-                notes: "",
-            });
 
-            console.log(formData)
-
-            setActiveStep(0);
-            setPhotoPreview(null);
-            onClose();
+            try {
+                setError("");
+                const updatedChar = await updateUserCharacter(formData);
+                await fetchUser();
+                onSave(updatedChar);
+                setAlert("Profile updated successfully", "success");
+                setFormData({
+                    name: "",
+                    lastName: "",
+                    nickname: "",
+                    phone: "",
+                    email: "",
+                    instagram: "",
+                    telegram: "",
+                    facebook: "",
+                    address: "",
+                    birthday: "",
+                    interests: [],
+                    notes: "",
+                });
+                setPhotoPreview(null);
+                setActiveStep(0);
+                onClose();
+            } catch (err) {
+                setError("Could not update profile. Please try again.");
+                setAlert("Failed to update profile", "error");
+            }
         }
     };
 
+
     const handleBack = () => setActiveStep((prev) => prev - 1);
+
+    const updateUserCharacter = async (data: UserCharacterData) => {
+        const form = new FormData();
+        for (const key in data) {
+            const value = data[key as keyof UserCharacterData];
+            if (value !== undefined && value !== null) {
+                form.append(key, value as any);
+            }
+        }
+
+        try {
+            const response = await fetch("http://localhost:5000/api/user", {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: form,
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to update user character");
+            }
+
+            const updated = await response.json();
+            return updated;
+        } catch (err) {
+            console.error("Update error:", err);
+            throw err;
+        }
+    };
 
     return (
         <Dialog
@@ -324,54 +347,9 @@ export default function UserModification({
                                 onChange={(newValue) => {
                                     setFormData({ ...formData, birthday: newValue?.format("YYYY-MM-DD") });
                                 }}
-                                slotProps={{ textField: { fullWidth: true, sx: { mt: 2, mb: 2 } } }}
+                                slotProps={{ textField: { fullWidth: true, sx: { mt: 2 } } }}
                             />
                         </LocalizationProvider>
-                        <Autocomplete
-                            multiple
-                            freeSolo
-                            options={defaultTags}
-                            value={formData.tags || []}
-                            onChange={(_, newValue) =>
-                                setFormData((prev) => ({
-                                    ...prev,
-                                    tags: newValue,
-                                }))
-                            }
-                            renderTags={(value: readonly string[], getTagProps) =>
-                                value.map((option: string, index: number) => {
-                                    const { key, ...tagProps } = getTagProps({ index });
-                                    return (
-                                        <Chip
-                                            key={key}
-                                            label={option}
-                                            variant="outlined"
-                                            {...tagProps}
-                                            sx={{ borderRadius: "8px" }}
-                                        />
-                                    );
-                                })
-                            }
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Tags"
-                                    placeholder="Add a tag"
-                                />
-                            )}
-                        />
-                        <TextField
-                            label="Other Relationships"
-                            fullWidth
-                            value={formData.otherRelationships || ""}
-                            onChange={handleChange("otherRelationships")}
-                            sx={{ mt: 2 }}
-                        />
-                    </>
-                )}
-
-                {activeStep === 3 && (
-                    <>
                         <Autocomplete
                             multiple
                             freeSolo
@@ -404,21 +382,6 @@ export default function UserModification({
                                     sx={{ mt: 2 }}
                                 />
                             )}
-                        />
-
-                        <TextField
-                            label="Related Events"
-                            fullWidth
-                            value={formData.relatedEvents || ""}
-                            onChange={handleChange("relatedEvents")}
-                            sx={{ mt: 2 }}
-                        />
-                        <TextField
-                            label="How you met"
-                            fullWidth
-                            value={formData.howDidYouMeet || ""}
-                            onChange={handleChange("howDidYouMeet")}
-                            sx={{ mt: 2 }}
                         />
                         <TextField
                             label="Notes"

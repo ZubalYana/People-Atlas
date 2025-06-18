@@ -281,16 +281,6 @@ export default function NetworkPage() {
                     onSave={handleCharacterSave}
                     initialData={{}}
                 />
-
-                {message && severity && (
-                    <Alert
-                        severity={severity}
-                        onClose={clearAlert}
-                        sx={{ position: "absolute", top: 20, right: 20, zIndex: 10 }}
-                    >
-                        {message}
-                    </Alert>
-                )}
             </div>
         </PageLayout>
     );

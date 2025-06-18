@@ -4,76 +4,13 @@ import { UserCircle2, LogOut, Pencil } from "lucide-react";
 import PageLayout from "../../PageLayout";
 import { Button } from "@mui/material";
 import UserModification from "./UserModification";
-import { useAlertStore } from "../../../stores/useAlertStore";
 export default function ProfilePage() {
     const { user, fetchUser } = useAuthStore();
     const [modalOpen, setModalOpen] = useState(false);
-    const { message, severity, setAlert, clearAlert } = useAlertStore();
 
     useEffect(() => {
         if (!user) fetchUser();
     }, [user, fetchUser]);
-
-    const handleCharacterCreationClick = () => {
-        setModalOpen(true);
-    };
-
-    const handleCharacterSave = async (data: any) => {
-        try {
-            const formData = new FormData();
-
-            if (data.photo) {
-                formData.append("photo", data.photo);
-            }
-
-            const fields = [
-                "name",
-                "lastName",
-                "nickname",
-                "phone",
-                "email",
-                "instagram",
-                "telegram",
-                "facebook",
-                "address",
-                "birthday",
-                "relatedEvents",
-                "howDidYouMeet",
-                "notes",
-            ];
-
-            fields.forEach((field) => {
-                if (data[field]) {
-                    formData.append(field, data[field]);
-                }
-            });
-
-            const arrayFields = ["tags", "interests", "otherRelationships"];
-            arrayFields.forEach((field) => {
-                if (Array.isArray(data[field])) {
-                    data[field].forEach((value: string) => {
-                        formData.append(field, value);
-                    });
-                }
-            });
-
-            const response = await fetch("http://localhost:5000/api/characters", {
-                method: "POST",
-                body: formData,
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                setAlert("Character created successfully", "success");
-                setModalOpen(false);
-            } else {
-                setAlert(result.message || "Server error while creating character", "error");
-            }
-        } catch (error) {
-            setAlert("Failed to create character. Please try again.", "error");
-        }
-    };
 
     const character = user?.character;
     const photoUrl = character?.photo;
@@ -160,9 +97,10 @@ export default function ProfilePage() {
             <UserModification
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
-                onSave={handleCharacterSave}
+                onSave={() => setModalOpen(false)}
                 initialData={{}}
             />
+
         </PageLayout>
     )
 }

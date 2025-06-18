@@ -1,12 +1,15 @@
 import Sidemenu from './Sidemenu';
 import { Menu } from 'lucide-react';
 import { useUIStore } from '../stores/useUIStore';
+import { useAlertStore } from '../stores/useAlertStore';
+import { Alert } from '@mui/material';
 
 export default function PageLayout({ children }: { children: React.ReactNode }) {
     const isSidemenuOpen = useUIStore((state) => state.isSidemenuOpen);
     const toggleSidemenu = useUIStore((state) => state.toggleSidemenu);
     const openSidemenu = useUIStore((state) => state.openSidemenu);
     const closeSidemenu = useUIStore((state) => state.closeSidemenu);
+    const { message, severity, setAlert, clearAlert } = useAlertStore();
 
     return (
         <div className="flex h-screen overflow-hidden">
@@ -26,6 +29,15 @@ export default function PageLayout({ children }: { children: React.ReactNode }) 
                 )}
                 {children}
             </div>
+            {message && severity && (
+                <Alert
+                    severity={severity}
+                    onClose={clearAlert}
+                    sx={{ position: "absolute", top: 20, right: 20, zIndex: 10 }}
+                >
+                    {message}
+                </Alert>
+            )}
         </div>
     );
 }

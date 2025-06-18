@@ -72,7 +72,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         if (!token) return;
 
         try {
-            const res = await axios.get('/api/auth/user', {
+            const res = await axios.get('http://localhost:5000/api/user', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
