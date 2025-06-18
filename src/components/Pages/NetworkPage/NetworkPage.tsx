@@ -9,7 +9,7 @@ import { useAuthStore } from "../../../stores/useAuthStore";
 import { useAlertStore } from "../../../stores/useAlertStore";
 import { Plus } from "lucide-react";
 import CharacterCreation from "./CharacterCreation";
-import { Button, Alert } from "@mui/material";
+import { Button } from "@mui/material";
 import axios from "axios";
 
 interface Character {
@@ -36,7 +36,7 @@ interface Character {
 }
 export default function NetworkPage() {
     const { user, fetchUser } = useAuthStore();
-    const { message, severity, setAlert, clearAlert } = useAlertStore();
+    const { setAlert } = useAlertStore();
     const [modalOpen, setModalOpen] = useState(false);
 
     const networkContainerRef = useRef<HTMLDivElement>(null);

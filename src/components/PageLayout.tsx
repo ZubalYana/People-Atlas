@@ -9,7 +9,7 @@ export default function PageLayout({ children }: { children: React.ReactNode }) 
     const toggleSidemenu = useUIStore((state) => state.toggleSidemenu);
     const openSidemenu = useUIStore((state) => state.openSidemenu);
     const closeSidemenu = useUIStore((state) => state.closeSidemenu);
-    const { message, severity, setAlert, clearAlert } = useAlertStore();
+    const { message, severity, clearAlert } = useAlertStore();
 
     return (
         <div className="flex h-screen overflow-hidden">

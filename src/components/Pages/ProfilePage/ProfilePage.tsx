@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../../../stores/useAuthStore";
-import { UserCircle2, LogOut, Pencil } from "lucide-react";
+import { UserCircle2, LogOut, Pencil, Cake, MapPin } from "lucide-react";
 import PageLayout from "../../PageLayout";
 import { Button } from "@mui/material";
 import UserModification from "./UserModification";
@@ -14,6 +14,17 @@ export default function ProfilePage() {
 
     const character = user?.character;
     const photoUrl = character?.photo;
+
+    const countAge = () => {
+        const today = new Date();
+        const birthDate = new Date(character?.birthday || "");
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
     return (
         <PageLayout>
             <div className="w-full h-full flex flex-col items-center justify-center">
@@ -32,11 +43,37 @@ export default function ProfilePage() {
                             )}
                         </div>
                         <div className="pt-2 ml-3">
-                            <h3 className="text-[22px] font-bold text-[#1E293B]">{character?.name} {character?.lastName}</h3>
+                            {character?.nickname ? (
+                                <h3 className="text-[22px] font-bold text-[#1E293B]">
+                                    {character.name} {character.lastName}, AKA {character.nickname}
+                                </h3>
+                            ) : (
+                                <h3 className="text-[22px] font-bold text-[#1E293B]">
+                                    {character?.name} {character?.lastName}
+                                </h3>
+                            )}
                             <p className="text-[16px]">{user?.email}</p>
                         </div>
                     </div>
-                    <div className="w-[380px] flex gap-4 mt-3">
+                    <div className="mt-2">
+                        {character?.birthday && (
+                            <div className="flex items-end mt-3">
+                                <Cake strokeWidth={1.5} size={26} className="mr-2" />
+                                <p className="text-[16px]">
+                                    Born on <span className="font-semibold text-[#1E293B]">{new Date(character.birthday).toLocaleDateString()}</span>, Age: <span className="font-semibold text-[#1E293B]">{countAge()}</span>
+                                </p>
+                            </div>
+                        )}
+                        {character?.address && (
+                            <div className="flex items-end mt-3">
+                                <MapPin strokeWidth={1.5} size={26} className="mr-2" />
+                                <p className="text-[16px]">
+                                    Address: <span className="font-semibold text-[#1E293B]">{character.address}</span>
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="w-[380px] flex gap-4 mt-4">
                         <Button
                             onClick={() => setModalOpen(true)}
                             variant="outlined"
