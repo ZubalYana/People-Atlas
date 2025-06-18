@@ -15,6 +15,7 @@ export default function Sidemenu() {
             <nav className="mt-4 space-y-2 text-[#1E293B]">
                 <Link to="/" className="block">Network</Link>
                 <Link to="/#" className="block">Characters list</Link>
+                <Link to="/family-tree" className="block">Family Tree</Link>
                 <Link to="/my-profile" className="block">Profile</Link>
                 <Link to="/#" className="block">Settings</Link>
             </nav>
