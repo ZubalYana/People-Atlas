@@ -3,6 +3,8 @@ import { Network, DataSet } from "vis-network/standalone";
 import type { Node } from "vis-network/standalone";
 import type { Edge } from "vis-network/standalone";
 import "vis-network/styles/vis-network.css";
+import { useLocation } from "react-router-dom";
+
 
 import PageLayout from "../../PageLayout";
 import { useAuthStore } from "../../../stores/useAuthStore";
@@ -41,14 +43,14 @@ export default function NetworkPage() {
 
     const networkContainerRef = useRef<HTMLDivElement>(null);
     const networkRef = useRef<Network | null>(null);
+    const location = useLocation();
 
     const [characters, setCharacters] = useState<Character[]>([]);
-
     useEffect(() => {
         axios.get("/api/characters")
             .then((res) => setCharacters(res.data))
             .catch((err) => console.error("Fetch error", err));
-    }, []);
+    }, [location.pathname]);
     console.log(characters)
 
     useEffect(() => {
@@ -186,7 +188,7 @@ export default function NetworkPage() {
             network.destroy();
             networkRef.current = null;
         };
-    }, [user]);
+    }, [user, characters]);
 
     const handleCharacterCreationClick = () => {
         setModalOpen(true);
